@@ -179,6 +179,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							'searches' => __( "Searches", 'google-analytics-dashboard-for-wp' ),
 							'trafficdetails' => __( "Traffic", 'google-analytics-dashboard-for-wp' ),
 							'technologydetails' => __( "Technology", 'google-analytics-dashboard-for-wp' ),
+							'screenviews' => __( "Screen Views", 'google-analytics-dashboard-for-wp' ),
 						),
 						'i18n' => array(
 							__( "A JavaScript Error is blocking plugin resources!", 'google-analytics-dashboard-for-wp' ), //0
@@ -207,6 +208,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							__( "CAMPAIGN", 'google-analytics-dashboard-for-wp' ),
 							__( "DIRECT", 'google-analytics-dashboard-for-wp' ),
 							__( "NEW", 'google-analytics-dashboard-for-wp' ), //25
+							__( "Screen Views", 'google-analytics-dashboard-for-wp' ),
 						),
 						'rtLimitPages' => $this->gadwp->config->options['ga_realtime_pages'],
 						'colorVariations' => GADWP_Tools::variations( $this->gadwp->config->options['ga_dash_style'] ),
@@ -275,6 +277,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							'searches' => __( "Searches", 'google-analytics-dashboard-for-wp' ),
 							'trafficdetails' => __( "Traffic", 'google-analytics-dashboard-for-wp' ),
 							'technologydetails' => __( "Technology", 'google-analytics-dashboard-for-wp' ),
+							'screenviews' => __( "Screen Views", 'google-analytics-dashboard-for-wp' ),
 						),
 						'i18n' => array(
 							__( "A JavaScript Error is blocking plugin resources!", 'google-analytics-dashboard-for-wp' ), //0
@@ -297,6 +300,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							__( "Operating System", 'google-analytics-dashboard-for-wp' ),
 							__( "Screen Resolution", 'google-analytics-dashboard-for-wp' ),
 							__( "Mobile Brand", 'google-analytics-dashboard-for-wp' ),
+							__( "Screen Views", 'google-analytics-dashboard-for-wp' ),
 						),
 						'colorVariations' => GADWP_Tools::variations( $this->gadwp->config->options['ga_dash_style'] ),
 						'region' => $region,

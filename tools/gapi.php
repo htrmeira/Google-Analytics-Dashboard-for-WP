@@ -330,6 +330,9 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				case 'pageviews' :
 					$title = __( "Page Views", 'google-analytics-dashboard-for-wp' );
 					break;
+				case 'screenviews' :
+					$title = __( "Screen Views", 'google-analytics-dashboard-for-wp' );
+					break;
 				case 'visitBounceRate' :
 					$title = __( "Bounce Rate", 'google-analytics-dashboard-for-wp' );
 					break;
@@ -798,7 +801,7 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 			if ( empty( $projectId ) || ! is_numeric( $projectId ) ) {
 				wp_die( - 26 );
 			}
-			if ( in_array( $query, array( 'sessions', 'users', 'organicSearches', 'visitBounceRate', 'pageviews', 'uniquePageviews' ) ) ) {
+			if ( in_array( $query, array( 'sessions', 'users', 'organicSearches', 'visitBounceRate', 'pageviews', 'uniquePageviews', 'screenviews' ) ) ) {
 				return $this->get_areachart_data( $projectId, $from, $to, $query, $filter );
 			}
 			if ( $query == 'bottomstats' ) {
