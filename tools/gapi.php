@@ -281,6 +281,7 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				} else {
 					$data = $transient;
 				}
+
 			} catch ( Google_Service_Exception $e ) {
 				GADWP_Tools::set_cache( 'last_error', date( 'Y-m-d H:i:s' ) . ': ' . esc_html( "(" . $e->getCode() . ") " . $e->getMessage() ), $this->error_timeout );
 				GADWP_Tools::set_cache( 'gapi_errors', array( $e->getCode(), (array) $e->getErrors() ), $this->error_timeout );
@@ -305,6 +306,41 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 		 */
 		public function get_serial( $serial ) {
 			return sprintf( "%u", crc32( $serial ) );
+		}
+
+		private function get_screenviews_details( $projectId, $from, $to, $filter = '' ) {
+			$metrics = 'ga:screenviews';
+			if ( $from == "today" || $from == "yesterday" ) {
+				$dimensions = 'ga:screenName';
+			} else if ( $from == "365daysAgo" || $from == "1095daysAgo" ) {
+				$dimensions = 'ga:screenName';
+			} else {
+				$dimensions = 'ga:screenName';
+			}
+
+			$options = array( 'dimensions' => $dimensions, 'sort' => '-ga:screenviews', 'quotaUser' => $this->managequota . 'p' . $projectId );
+			if ( $filter ) {
+				$options['filters'] = 'ga:pagePath==' . $filter;
+			}
+
+			$serial = 'qr11_' . $this->get_serial( $projectId . $from . $metrics . $filter );
+			$data = $this->handle_corereports( $projectId, $from, $to, $metrics, $options, $serial );
+
+			if ( is_numeric( $data ) ) {
+				return $data;
+			}
+			$total_views = 0;
+			foreach ( $data->getRows() as $row ) {
+				$total_views += $row[1];
+			}
+
+			$gadwp_data = array(array('Screen Name', 'Views '.$total_views.' (100%)'));
+
+			foreach ( $data->getRows() as $row ) {
+				$views_proportion = ($row[1] / $total_views) * 100;
+				$gadwp_data[] = array($row[0], $row[1].' ('.round( $views_proportion, 2 ).'%)');
+			}
+			return $gadwp_data;
 		}
 
 		/**
@@ -350,7 +386,7 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				$dimensions = 'ga:hour';
 				$dayorhour = __( "Hour", 'google-analytics-dashboard-for-wp' );
 			} else if ( $from == "365daysAgo" || $from == "1095daysAgo" ) {
-				$dimensions = 'ga:yearMonth, ga:month';
+				$dimensions = 'ga:yearMonth,ga:month';
 				$dayorhour = __( "Date", 'google-analytics-dashboard-for-wp' );
 			} else {
 				$dimensions = 'ga:date,ga:dayOfWeekName';
@@ -783,6 +819,7 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 			}
 		}
 
+
 		/**
 		 * Handles ajax requests and calls the needed methods
 		 * @param
@@ -821,6 +858,9 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 			}
 			if ( $query == 'realtime' ) {
 				return $this->get_realtime( $projectId );
+			}
+			if ( $query == 'screenviews_details' ) {
+				return $this->get_screenviews_details( $projectId, $from, $to, $filter  );
 			}
 			if ( $query == 'channelGrouping' || $query == 'deviceCategory' ) {
 				return $this->get_orgchart_data( $projectId, $from, $to, $query, $filter );

@@ -182,6 +182,7 @@ jQuery.fn.extend( {
 			realtime : '',
 			rtRuns : null,
 			i18n : null,
+			screenViewsChartTableChartData : '',
 
 			getTitle : function ( scope ) {
 				if ( scope == 'admin-item' ) {
@@ -291,6 +292,43 @@ jQuery.fn.extend( {
 					}
 				} else {
 					reports.throwDebug( response );
+				}
+				NProgress.done();
+			},
+
+			screenViewsChartTableChart : function ( response ) {
+				reports.screenViewsChartTableChartData = response;
+
+				if ( jQuery.isArray( response ) ) {
+					if ( !jQuery.isNumeric( response[ 0 ] ) ) {
+						if ( jQuery.isArray( response[ 0 ] ) ) {
+							jQuery( '#gadwp-reports' + slug ).show();
+							if ( postData.query == 'visitBounceRate,bottomstats' ) {
+								reports.drawAreaChart( response[ 0 ], true );
+							} else {
+								reports.drawAreaChart( response[ 0 ], false );
+							}
+						} else {
+							reports.throwDebug( response[ 0 ] );
+						}
+					} else {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.throwError( '#gadwp-areachart' + slug, response[ 0 ], "125px" );
+					}
+				} else {
+					reports.throwDebug( response );
+				}
+
+				if ( !jQuery.isNumeric( response[ 1 ] ) ) {
+					if ( jQuery.isArray( response[ 1 ] ) ) {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.drawTableChart( response[ 1 ] );
+					} else {
+						reports.throwDebug( response[ 1 ] );
+					}
+				} else {
+					jQuery( '#gadwp-reports' + slug ).show();
+					reports.throwError( '#gadwp-bottomstats' + slug, response[ 1 ], "40px" );
 				}
 				NProgress.done();
 			},
@@ -928,6 +966,22 @@ jQuery.fn.extend( {
 							reports.geoChartTableChart( response );
 						} );
 
+					} else if ( query == 'screenviews' ) {
+
+						tpl = '<div id=" gadwp-screenviewscharttablechart' + slug + '">';
+						tpl += '<div id="gadwp-areachart' + slug + '"></div>';
+						tpl += '<div style="text-align : center; align : center;"  id="gadwp-tablechart' + slug + '"></div>';
+						tpl += '</div>';
+
+						jQuery( '#gadwp-reports' + slug ).html( tpl );
+						jQuery( '#gadwp-reports' + slug ).hide();
+
+						postData.query = query + ',screenviews_details';
+
+						jQuery.post( gadwpItemData.ajaxurl, postData, function ( response ) {
+							reports.screenViewsChartTableChart( response );
+						} );
+
 					} else {
 
 						tpl = '<div id="gadwp-areachartbottomstats' + slug + '">';
@@ -972,6 +1026,10 @@ jQuery.fn.extend( {
 				if ( jQuery( '#gadwp-orgcharttablechart' + slug ).length > 0 && jQuery.isArray( reports.orgChartTableChartData ) ) {
 					reports.orgChartTableChart( reports.orgChartTableChartData );
 				}
+				if ( jQuery( '#gadwp-screenviewscharttablechart' + slug ).length > 0 && jQuery.isArray( reports.screenViewsChartTableChartData ) ) {
+					reports.screenViewsChartTableChart( reports.screenViewsChartTableChartData );
+				}
+
 			},
 
 			init : function () {
