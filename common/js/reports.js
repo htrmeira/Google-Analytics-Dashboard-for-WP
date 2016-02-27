@@ -183,6 +183,7 @@ jQuery.fn.extend( {
 			rtRuns : null,
 			i18n : null,
 			screenViewsChartTableChartData : '',
+			eventsTrackingTablesData : '',
 
 			getTitle : function ( scope ) {
 				if ( scope == 'admin-item' ) {
@@ -237,6 +238,74 @@ jQuery.fn.extend( {
 				}
 				NProgress.done();
 
+			},
+
+			eventsTrackingTables : function ( response ) {
+				reports.eventsTrackingTablesData = response;
+
+				if ( jQuery.isArray( response ) ) {
+					if ( !jQuery.isNumeric( response[ 0 ] ) ) {
+						if ( jQuery.isArray( response[ 0 ] ) ) {
+							jQuery( '#gadwp-reports' + slug ).show();
+							reports.drawEventsStats( response[ 0 ] );
+						} else {
+							reports.throwDebug( response[ 0 ] );
+						}
+					} else {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.throwError( '#gadwp-eventtrackingstats' + slug, response[ 0 ], "40px" );
+					}
+
+					if ( !jQuery.isNumeric( response[ 1 ] ) ) {
+						if ( jQuery.isArray( response[ 1 ] ) ) {
+							jQuery( '#gadwp-reports' + slug ).show();
+							reports.drawTableChart2( response[ 1 ], 'gadwp-tablechart-category' );
+						} else {
+							reports.throwDebug( response[ 1 ] );
+						}
+					} else {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.throwError( '#gadwp-tablechart' + slug, response[ 1 ], "40px" );
+					}
+
+					if ( !jQuery.isNumeric( response[ 2 ] ) ) {
+						if ( jQuery.isArray( response[ 2 ] ) ) {
+							jQuery( '#gadwp-reports' + slug ).show();
+							reports.drawTableChart2( response[ 2 ], 'gadwp-tablechart-action' );
+						} else {
+							reports.throwDebug( response[ 2 ] );
+						}
+					} else {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.throwError( '#gadwp-tablechart' + slug, response[ 2 ], "40px" );
+					}
+
+					if ( !jQuery.isNumeric( response[ 3 ] ) ) {
+						if ( jQuery.isArray( response[ 3 ] ) ) {
+							jQuery( '#gadwp-reports' + slug ).show();
+							reports.drawTableChart2( response[ 3 ], 'gadwp-tablechart-label' );
+						} else {
+							reports.throwDebug( response[ 3 ] );
+						}
+					} else {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.throwError( '#gadwp-tablechart' + slug, response[ 3 ], "40px" );
+					}
+
+				} else {
+					reports.throwDebug( response );
+				}
+
+				NProgress.done();
+			},
+
+			drawEventsStats : function ( data ) {
+				jQuery( "#totalevents" + slug ).text( data[ 0 ] );
+				jQuery( "#uniqueevents" + slug ).text( data[ 1 ] );
+				jQuery( "#eventvalue" + slug ).text( data[ 2 ] );
+				jQuery( "#avgeventvalue" + slug ).text( data[ 3 ] );
+				jQuery( "#sessionswithevent" + slug ).text( data[ 4 ] );
+				jQuery( "#eventsoersessionwithevent" + slug ).text( data[ 5 ] );
 			},
 
 			orgChartPieCharts : function ( response ) {
@@ -303,11 +372,7 @@ jQuery.fn.extend( {
 					if ( !jQuery.isNumeric( response[ 0 ] ) ) {
 						if ( jQuery.isArray( response[ 0 ] ) ) {
 							jQuery( '#gadwp-reports' + slug ).show();
-							if ( postData.query == 'visitBounceRate,bottomstats' ) {
-								reports.drawAreaChart( response[ 0 ], true );
-							} else {
-								reports.drawAreaChart( response[ 0 ], false );
-							}
+							reports.drawAreaChart( response[ 0 ], false );
 						} else {
 							reports.throwDebug( response[ 0 ] );
 						}
@@ -328,10 +393,11 @@ jQuery.fn.extend( {
 					}
 				} else {
 					jQuery( '#gadwp-reports' + slug ).show();
-					reports.throwError( '#gadwp-bottomstats' + slug, response[ 1 ], "40px" );
+					reports.throwError( '#gadwp-tablechart' + slug, response[ 1 ], "40px" );
 				}
 				NProgress.done();
 			},
+
 
 			orgChartTableChart : function ( response ) {
 				reports.orgChartTableChartData = response
@@ -364,6 +430,10 @@ jQuery.fn.extend( {
 			},
 
 			drawTableChart : function ( data ) {
+				reports.drawTableChart2( data, 'gadwp-tablechart' );
+			},
+
+			drawTableChart2 : function ( data, elementId ) {
 				var chartData, options, chart;
 
 				chartData = google.visualization.arrayToDataTable( data );
@@ -373,7 +443,8 @@ jQuery.fn.extend( {
 					width : '100%',
 					allowHtml : true
 				};
-				chart = new google.visualization.Table( document.getElementById( 'gadwp-tablechart' + slug ) );
+				//chart = new google.visualization.Table( document.getElementById( 'gadwp-tablechart' + slug ) );
+				chart = new google.visualization.Table( document.getElementById( elementId + slug ) );
 
 				chart.draw( chartData, options );
 			},
@@ -980,6 +1051,39 @@ jQuery.fn.extend( {
 
 						jQuery.post( gadwpItemData.ajaxurl, postData, function ( response ) {
 							reports.screenViewsChartTableChart( response );
+						} );
+
+					} else if ( query == 'eventstracking' ) {
+
+						tpl = '<div id=" gadwp-eventstrackingtables' + slug + '">';
+						tpl += '<div id="gadwp-eventtrackingstats' + slug + '">';
+						tpl += '<div class="inside">';
+						tpl += '<div class="small-box"><h3>' + gadwpItemData.i18n[ 28 ] + '</h3><p id="totalevents' + slug + '">&nbsp;</p></div>';
+						tpl += '<div class="small-box"><h3>' + gadwpItemData.i18n[ 29 ] + '</h3><p id="uniqueevents' + slug + '">&nbsp;</p></div>';
+						tpl += '<div class="small-box"><h3>' + gadwpItemData.i18n[ 30 ] + '</h3><p id="eventvalue' + slug + '">&nbsp;</p></div>';
+						tpl += '<div class="small-box"><h3>' + gadwpItemData.i18n[ 31 ] + '</h3><p id="avgeventvalue' + slug + '">&nbsp;</p></div>';
+						tpl += '<div class="small-box"><h3>' + gadwpItemData.i18n[ 32 ] + '</h3><p id="sessionswithevent' + slug + '">&nbsp;</p></div>';
+						tpl += '<div class="small-box"><h3>' + gadwpItemData.i18n[ 33 ] + '</h3><p id="eventsoersessionwithevent' + slug + '">&nbsp;</p></div>';
+						tpl += '</div>';
+						tpl += '</div>';
+
+						tpl += '<div style="margin-top: 1.5cm; 	padding-top: 1.5cm;"><h3><b>' + gadwpItemData.i18n[ 34 ]  + '</b></div>';
+						tpl += '<div style="text-align : center; align : center;"  id="gadwp-tablechart-category' + slug + '"></div>';
+
+						tpl += '<div style="margin-top: 0.5cm; 	padding-top: 0.5cm;"><h3><b>' + gadwpItemData.i18n[ 35 ]  + '</b></div>';
+						tpl += '<div style="text-align : center; align : center;"  id="gadwp-tablechart-action' + slug + '"></div>';
+
+						tpl += '<div style="margin-top: 0.5cm; 	padding-top: 0.5cm;"><h3><b>' + gadwpItemData.i18n[ 36 ]  + '</b></div>';
+						tpl += '<div style="text-align : center; align : center;"  id="gadwp-tablechart-label' + slug + '"></div>';
+						tpl += '</div>';
+
+						jQuery( '#gadwp-reports' + slug ).html( tpl );
+						jQuery( '#gadwp-reports' + slug ).hide();
+
+						postData.query = query + ',eventCategory,eventAction,eventLabel';
+
+						jQuery.post( gadwpItemData.ajaxurl, postData, function ( response ) {
+							reports.eventsTrackingTables( response );
 						} );
 
 					} else {

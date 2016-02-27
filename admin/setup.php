@@ -180,6 +180,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							'trafficdetails' => __( "Traffic", 'google-analytics-dashboard-for-wp' ),
 							'technologydetails' => __( "Technology", 'google-analytics-dashboard-for-wp' ),
 							'screenviews' => __( "Screen Views", 'google-analytics-dashboard-for-wp' ),
+							'eventstracking' => __( "Events Tracking", 'google-analytics-dashboard-for-wp' ),
 						),
 						'i18n' => array(
 							__( "A JavaScript Error is blocking plugin resources!", 'google-analytics-dashboard-for-wp' ), //0
@@ -209,6 +210,16 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							__( "DIRECT", 'google-analytics-dashboard-for-wp' ),
 							__( "NEW", 'google-analytics-dashboard-for-wp' ), //25
 							__( "Screen Views", 'google-analytics-dashboard-for-wp' ),
+							__( "Events Tracking", 'google-analytics-dashboard-for-wp' ),
+							__( "Total Events", 'google-analytics-dashboard-for-wp' ),
+							__( "Unique Events", 'google-analytics-dashboard-for-wp' ),
+							__( "Event Value", 'google-analytics-dashboard-for-wp' ),
+							__( "Avg. Value", 'google-analytics-dashboard-for-wp' ),
+							__( "Sessions with Event", 'google-analytics-dashboard-for-wp' ),
+							__( "Events / Session with Event", 'google-analytics-dashboard-for-wp' ),
+							__( "Event Category", 'google-analytics-dashboard-for-wp' ),
+							__( "Event Action", 'google-analytics-dashboard-for-wp' ),
+							__( "Event Label", 'google-analytics-dashboard-for-wp' ),
 						),
 						'rtLimitPages' => $this->gadwp->config->options['ga_realtime_pages'],
 						'colorVariations' => GADWP_Tools::variations( $this->gadwp->config->options['ga_dash_style'] ),
@@ -278,6 +289,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							'trafficdetails' => __( "Traffic", 'google-analytics-dashboard-for-wp' ),
 							'technologydetails' => __( "Technology", 'google-analytics-dashboard-for-wp' ),
 							'screenviews' => __( "Screen Views", 'google-analytics-dashboard-for-wp' ),
+							'eventstracking' => __( "Events Tracking", 'google-analytics-dashboard-for-wp' ),
 						),
 						'i18n' => array(
 							__( "A JavaScript Error is blocking plugin resources!", 'google-analytics-dashboard-for-wp' ), //0
@@ -301,6 +313,7 @@ if ( ! class_exists( 'GADWP_Backend_Setup' ) ) {
 							__( "Screen Resolution", 'google-analytics-dashboard-for-wp' ),
 							__( "Mobile Brand", 'google-analytics-dashboard-for-wp' ),
 							__( "Screen Views", 'google-analytics-dashboard-for-wp' ),
+							__( "Events Tracking", 'google-analytics-dashboard-for-wp' ),
 						),
 						'colorVariations' => GADWP_Tools::variations( $this->gadwp->config->options['ga_dash_style'] ),
 						'region' => $region,

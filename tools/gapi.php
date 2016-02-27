@@ -310,14 +310,7 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 
 		private function get_screenviews_details( $projectId, $from, $to, $filter = '' ) {
 			$metrics = 'ga:screenviews';
-			if ( $from == "today" || $from == "yesterday" ) {
-				$dimensions = 'ga:screenName';
-			} else if ( $from == "365daysAgo" || $from == "1095daysAgo" ) {
-				$dimensions = 'ga:screenName';
-			} else {
-				$dimensions = 'ga:screenName';
-			}
-
+			$dimensions = 'ga:screenName';
 			$options = array( 'dimensions' => $dimensions, 'sort' => '-ga:screenviews', 'quotaUser' => $this->managequota . 'p' . $projectId );
 			if ( $filter ) {
 				$options['filters'] = 'ga:pagePath==' . $filter;
@@ -329,6 +322,7 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 			if ( is_numeric( $data ) ) {
 				return $data;
 			}
+
 			$total_views = 0;
 			foreach ( $data->getRows() as $row ) {
 				$total_views += $row[1];
@@ -340,6 +334,71 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				$views_proportion = ($row[1] / $total_views) * 100;
 				$gadwp_data[] = array($row[0], $row[1].' ('.round( $views_proportion, 2 ).'%)');
 			}
+			return $gadwp_data;
+		}
+
+		private function get_events( $projectId, $from, $to, $filter = '' ) {
+			$metrics = 'ga:totalEvents,ga:uniqueEvents,ga:eventValue,ga:avgEventValue,ga:sessionsWithEvent,ga:eventsPerSessionWithEvent';
+			$dimensions = 'ga:eventCategory';
+
+			$options = array( 'dimensions' => $dimensions, 'quotaUser' => $this->managequota . 'p' . $projectId );
+
+			if ( $filter ) {
+				$options['filters'] = 'ga:pagePath==' . $filter;
+			}
+
+			$serial = 'qr12_' . $this->get_serial( $projectId . $from . $metrics . $filter );
+			$data = $this->handle_corereports( $projectId, $from, $to, $metrics, $options, $serial );
+
+			if ( is_numeric( $data ) ) {
+				return $data;
+			}
+
+			$gadwp_data = array();
+			foreach ( $data->getRows() as $row ) {
+				$gadwp_data = array_map( 'floatval', $row );
+			}
+
+			// i18n support
+			$gadwp_formatted_data[0] = number_format_i18n( $gadwp_data[1] );
+			$gadwp_formatted_data[1] = number_format_i18n( $gadwp_data[2] );
+			$gadwp_formatted_data[2] = number_format_i18n( $gadwp_data[3] );
+			$gadwp_formatted_data[3] = number_format_i18n( $gadwp_data[4], 2 );
+			$gadwp_formatted_data[4] = number_format_i18n( $gadwp_data[5] );
+			$gadwp_formatted_data[5] = number_format_i18n( $gadwp_data[6], 2 );
+
+      return $gadwp_formatted_data;
+		}
+
+		private function get_event_category( $projectId, $from, $to, $filter = '', $query ) {
+			$metrics = 'ga:totalEvents';
+			$dimensions = 'ga:'.$query;
+
+			$options = array( 'dimensions' => $dimensions, 'sort' => '-ga:totalEvents', 'quotaUser' => $this->managequota . 'p' . $projectId );
+
+			if ( $filter ) {
+				$options['filters'] = 'ga:pagePath==' . $filter;
+			}
+
+			$serial = 'qr13_'.$query.'_'. $this->get_serial( $projectId . $from . $metrics . $filter );
+			$data = $this->handle_corereports( $projectId, $from, $to, $metrics, $options, $serial );
+
+			if ( is_numeric( $data ) ) {
+				return $data;
+			}
+
+			$total_views = 0;
+			foreach ( $data->getRows() as $row ) {
+				$total_views += $row[1];
+			}
+
+			$gadwp_data = array(array('Event', 'Total '.$total_views.' (100%)'));
+
+			foreach ( $data->getRows() as $row ) {
+				$views_proportion = ($row[1] / $total_views) * 100;
+				$gadwp_data[] = array($row[0], $row[1].' ('.round( $views_proportion, 2 ).'%)');
+			}
+
 			return $gadwp_data;
 		}
 
@@ -860,7 +919,13 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				return $this->get_realtime( $projectId );
 			}
 			if ( $query == 'screenviews_details' ) {
-				return $this->get_screenviews_details( $projectId, $from, $to, $filter  );
+				return $this->get_screenviews_details( $projectId, $from, $to, $filter );
+			}
+			if ( $query == 'eventstracking' ) {
+				return $this->get_events( $projectId, $from, $to, $filter );
+			}
+			if ( in_array( $query, array( 'eventCategory', 'eventAction', 'eventLabel' ) ) ) {
+				return $this->get_event_category( $projectId, $from, $to, $filter, $query );
 			}
 			if ( $query == 'channelGrouping' || $query == 'deviceCategory' ) {
 				return $this->get_orgchart_data( $projectId, $from, $to, $query, $filter );
