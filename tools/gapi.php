@@ -328,7 +328,8 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				$total_views += $row[1];
 			}
 
-			$gadwp_data = array(array('Screen Name', 'Views '.$total_views.' (100%)'));
+			$gadwp_data = array(array( esc_html__( 'Screen Name', 'google-analytics-dashboard-for-wp' ),
+																	esc_html__( 'Views', 'google-analytics-dashboard-for-wp' ) .' '.$total_views.' (100%)'));
 
 			foreach ( $data->getRows() as $row ) {
 				$views_proportion = ($row[1] / $total_views) * 100;
@@ -392,7 +393,8 @@ if ( ! class_exists( 'GADWP_GAPI_Controller' ) ) {
 				$total_views += $row[1];
 			}
 
-			$gadwp_data = array(array('Event', 'Total '.$total_views.' (100%)'));
+			$gadwp_data = array(array( esc_html__( 'Event', 'google-analytics-dashboard-for-wp' ),
+																						'Total '.$total_views.' (100%)'));
 
 			foreach ( $data->getRows() as $row ) {
 				$views_proportion = ($row[1] / $total_views) * 100;
