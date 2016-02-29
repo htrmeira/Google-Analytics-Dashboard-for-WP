@@ -325,6 +325,7 @@ jQuery.fn.extend( {
 					}
 
 					for ( i = 1; i < response.length; i++ ) {
+						console.log("==> CODDY - orgChartPieCharts: i->" + i);
 						if ( !jQuery.isNumeric( response[ i ] ) ) {
 							if ( jQuery.isArray( response[ i ] ) ) {
 								jQuery( '#gadwp-reports' + slug ).show();
@@ -337,6 +338,42 @@ jQuery.fn.extend( {
 							reports.throwError( '#gadwp-piechart-' + i + slug, response[ i ], "80px" );
 						}
 					}
+				} else {
+					reports.throwDebug( response );
+				}
+				NProgress.done();
+			},
+			pieChart : function ( response ) {
+				console.log("==> CODDY - orgChartPieCharts: response->" + response[ 0 ]);
+				var i = 0;
+				reports.orgChartPieChartsData = response;
+				if ( jQuery.isArray( response ) ) {
+					/*if ( !jQuery.isNumeric( response[ 0 ] ) ) {
+						if ( jQuery.isArray( response[ 0 ] ) ) {
+							jQuery( '#gadwp-reports' + slug ).show();
+							reports.drawOrgChart( response[ 0 ] );
+						} else {
+							reports.throwDebug( response[ 0 ] );
+						}
+					} else {
+						jQuery( '#gadwp-reports' + slug ).show();
+						reports.throwError( '#gadwp-orgchart' + slug, response[ 0 ], "125px" );
+					}*/
+
+					//for ( i = 1; i < response.length; i++ ) {
+					console.log("==> CODDY - orgChartPieCharts");
+						if ( !jQuery.isNumeric( response[ 0 ] ) ) {
+							if ( jQuery.isArray( response[ 0 ] ) ) {
+								jQuery( '#gadwp-reports' + slug ).show();
+								reports.drawPieChart( 'piechart-' + 4, response[ 0 ], null );//reports.i18n[ 4 ] );
+							} else {
+								reports.throwDebug( response[ 0 ] );
+							}
+						} else {
+							jQuery( '#gadwp-reports' + slug ).show();
+							reports.throwError( '#gadwp-piechart-' + 4 + slug, response[ 0 ], "80px" );
+						}
+					//}
 				} else {
 					reports.throwDebug( response );
 				}
@@ -993,7 +1030,7 @@ jQuery.fn.extend( {
 							reports.orgChartTableChart( response );
 						} );
 
-					} else if ( query == 'trafficdetails' || query == 'technologydetails' ) {
+					/*} else if ( query == 'trafficdetails' || query == 'technologydetails' ) {
 
 						tpl = '<div id="gadwp-orgchartpiecharts' + slug + '">';
 						tpl += '<div id="gadwp-orgchart' + slug + '"></div>';
@@ -1019,8 +1056,35 @@ jQuery.fn.extend( {
 
 						jQuery.post( gadwpItemData.ajaxurl, postData, function ( response ) {
 							reports.orgChartPieCharts( response )
-						} );
+						} );*/
 
+					} else if ( query == 'technologydetails' ) {
+						tpl = '<div id="gadwp-orgchartpiecharts' + slug + '">';
+						tpl += '<div id="gadwp-orgchart' + slug + '"></div>';
+						//tpl += '<div class="gadwp-floatwraper">';
+						//tpl += '<div id="gadwp-piechart-1' + slug + '" class="halfsize floatleft"></div>';
+						//tpl += '<div id="gadwp-piechart-2' + slug + '" class="halfsize floatright"></div>';
+						//tpl += '</div>';
+						//tpl += '<div class="gadwp-floatwraper">';
+						//tpl += '<div id="gadwp-piechart-3' + slug + '" class="halfsize floatleft"></div>';
+						tpl += '<h3 style="text-align:center;" ><b>' + gadwpItemData.i18n[ 19 ] + '</b></h3>';
+						tpl += '<div id="gadwp-piechart-4' + slug + '"></div>';
+						//tpl += '</div>';
+						tpl += '</div>';
+
+						jQuery( '#gadwp-reports' + slug ).html( tpl );
+						jQuery( '#gadwp-reports' + slug ).hide();
+						//postData.query = 'channelGrouping,medium,visitorType,source,socialNetwork';
+						//postData.query = 'channelGrouping,medium,visitorType,source,socialNetwork';
+						//reports.i18n = gadwpItemData.i18n.slice( 0, 5 );
+						reports.i18n = gadwpItemData.i18n.slice( 15, 20 );
+						//postData.query = 'deviceCategory,browser,operatingSystem,screenResolution,mobileDeviceBranding';
+						postData.query = 'mobileDeviceBranding';
+
+						jQuery.post( gadwpItemData.ajaxurl, postData, function ( response ) {
+							//reports.orgChartPieCharts( response )
+							reports.pieChart( response );
+						} );
 					} else if ( query == 'locations' ) {
 
 						tpl = '<div id="gadwp-geocharttablechart' + slug + '">';
